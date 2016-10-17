@@ -1,6 +1,4 @@
-#**/*.iml
-**/target/
+**/*.iml
+*/target/**
 /.idea/
-/java-git/target/
-/threads/target/
-/servlet25/target/
+
