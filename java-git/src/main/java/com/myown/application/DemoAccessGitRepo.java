@@ -2,12 +2,13 @@ package com.myown.application;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.dircache.DirCache;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
+import org.eclipse.jgit.transport.PushResult;
+import org.eclipse.jgit.transport.RemoteRefUpdate;
 
 import java.io.File;
 import java.io.IOException;
@@ -75,10 +76,16 @@ public class DemoAccessGitRepo {
             }
             if(Files.isRegularFile(testFile, LinkOption.NOFOLLOW_LINKS)) {
                 System.out.println("testfile exists");
-                FileUtils.writeToFile(testFile, RandomStringUtils.random(10));
+                FileUtils.writeToFile(testFile, RandomStringUtils.randomAlphabetic(10));
                 RevCommit commit = git.commit().setAll(true).setMessage( "added text to test.txt" ).call();
             }
         }
+
+        Iterable<PushResult> iterable = git.push().call();
+        PushResult pushResult = iterable.iterator().next();
+        RemoteRefUpdate.Status status = pushResult.getRemoteUpdate( "refs/heads/master" ).getStatus();
+        System.out.println(status.toString());
+
 
         GitUtils.printStatus(git);
     }
