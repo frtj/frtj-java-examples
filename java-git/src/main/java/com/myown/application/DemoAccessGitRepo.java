@@ -1,13 +1,18 @@
 package com.myown.application;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.Status;
+import org.eclipse.jgit.dircache.DirCache;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Set;
@@ -46,21 +51,36 @@ public class DemoAccessGitRepo {
         }
 
         Git git = new Git(repository);
-        Status call = git.status().call();
-        System.out.println("modified size: "+call.getModified().size());
-        System.out.println("uncommitedChanges size: "+call.getUncommittedChanges().size());
-        System.out.println("untracked size: "+call.getUntracked().size());
 
-        Set<String> changed = call.getModified();
-        for (String s : changed) {
-            System.out.println("modified: "+s);
+
+        GitUtils.printStatus(git);
+
+        Path localResourcesPath = Paths.get("java-git/src/main/resources");
+        Path testFilePath = Paths.get("test.txt");
+
+        Path resources = currentPath.resolve(localResourcesPath);
+        if(!Files.exists(resources, LinkOption.NOFOLLOW_LINKS)) {
+            Files.createDirectories(resources);
         }
 
-        Set<String> untracked = call.getUntracked();
-        for (String s : untracked) {
-            System.out.println("untracked: "+s);
+        if(Files.exists(resources, LinkOption.NOFOLLOW_LINKS)) {
+            Path testFile = resources.resolve(testFilePath);
+            if(!Files.isRegularFile(testFile, LinkOption.NOFOLLOW_LINKS)) {
+                System.out.println("created the file: " + testFile.toString());
+                Files.createFile(testFile);
+                DirCache index = git.add().addFilepattern( localResourcesPath.resolve(testFilePath).toString() ).call();
+                RevCommit commit = git.commit().setAll(true).setMessage( "added test.txt" ).call();
+                System.out.println("git commit'd: " + commit.toString());
+
+            }
+            if(Files.isRegularFile(testFile, LinkOption.NOFOLLOW_LINKS)) {
+                System.out.println("testfile exists");
+                FileUtils.writeToFile(testFile, RandomStringUtils.random(10));
+                RevCommit commit = git.commit().setAll(true).setMessage( "added text to test.txt" ).call();
+            }
         }
 
+        GitUtils.printStatus(git);
     }
 
     private void findGitRepo() throws Exception {
