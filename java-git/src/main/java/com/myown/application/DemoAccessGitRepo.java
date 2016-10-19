@@ -90,7 +90,12 @@ public class DemoAccessGitRepo {
         System.out.println(parse.getString("keypass"));
 
 
-        SshSessionFactory sshSessionFactory = new JschConfigSessionFactory() {
+        /*SshSessionFactory sshSessionFactory = new JschConfigSessionFactory() {
+
+        };*/
+
+        SshSessionFactory.setInstance(new JschConfigSessionFactory() {
+
             @Override
             protected void configure(OpenSshConfig.Host host, Session session ) {
                 //session.setPassword( "password" );
@@ -119,11 +124,11 @@ public class DemoAccessGitRepo {
                 UserInfo userInfo = new CredentialsProviderUserInfo(session, provider);
                 session.setUserInfo(userInfo);
             }
-        };
+        });
 
 
         PushCommand push = git.push();
-        push.setTransportConfigCallback(
+        /*push.setTransportConfigCallback(
                 new TransportConfigCallback() {
                     @Override
                     public void configure( Transport transport ) {
@@ -131,7 +136,7 @@ public class DemoAccessGitRepo {
                         sshTransport.setSshSessionFactory( sshSessionFactory );
                     }
                 }
-        );
+        );*/
         Iterable<PushResult> iterable = push.call();
 
         PushResult pushResult = iterable.iterator().next();
