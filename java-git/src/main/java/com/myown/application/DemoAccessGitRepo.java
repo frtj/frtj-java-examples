@@ -42,6 +42,8 @@ public class DemoAccessGitRepo {
         repositoryBuilder.setGitDir(currentPath.resolve(".git").toFile());
         Repository repository = repositoryBuilder.build();
 
+        System.out.println("git dir: " + repository.getDirectory().toPath().toString());
+
         if( repository.getObjectDatabase().exists() ) {
             System.out.println("unreliable: git repo exists");
         }
@@ -54,6 +56,7 @@ public class DemoAccessGitRepo {
         }
 
         Git git = new Git(repository);
+
 
 
         GitUtils.printStatus(git);
