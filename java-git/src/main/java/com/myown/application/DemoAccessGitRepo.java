@@ -90,45 +90,17 @@ public class DemoAccessGitRepo {
         System.out.println(parse.getString("keypass"));
 
 
-        /*SshSessionFactory sshSessionFactory = new JschConfigSessionFactory() {
-
-        };*/
-
-        SshSessionFactory.setInstance(new JschConfigSessionFactory() {
-
+        SshSessionFactory sshSessionFactory = new JschConfigSessionFactory() {
             @Override
             protected void configure(OpenSshConfig.Host host, Session session ) {
-                //session.setPassword( "password" );
 
-
-                CredentialsProvider provider = new CredentialsProvider() {
-                    @Override
-                    public boolean isInteractive() {
-                        return false;
-                    }
-
-                    @Override
-                    public boolean supports(CredentialItem... items) {
-                        return true;
-                    }
-
-                    @Override
-                    public boolean get(URIish uri, CredentialItem... items) throws UnsupportedCredentialItem {
-                        for (CredentialItem item : items) {
-                            System.out.println("item: " + item.getPromptText());
-                            ((CredentialItem.StringType) item).setValue(parse.getString("keypass"));
-                        }
-                        return true;
-                    }
-                };
-                UserInfo userInfo = new CredentialsProviderUserInfo(session, provider);
-                session.setUserInfo(userInfo);
             }
-        });
+        };
 
 
         PushCommand push = git.push();
-        /*push.setTransportConfigCallback(
+
+        push.setTransportConfigCallback(
                 new TransportConfigCallback() {
                     @Override
                     public void configure( Transport transport ) {
@@ -136,7 +108,7 @@ public class DemoAccessGitRepo {
                         sshTransport.setSshSessionFactory( sshSessionFactory );
                     }
                 }
-        );*/
+        );
         Iterable<PushResult> iterable = push.call();
 
         PushResult pushResult = iterable.iterator().next();
