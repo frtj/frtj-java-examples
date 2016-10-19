@@ -110,6 +110,7 @@ public class DemoAccessGitRepo {
                     @Override
                     public boolean get(URIish uri, CredentialItem... items) throws UnsupportedCredentialItem {
                         for (CredentialItem item : items) {
+                            System.out.println("item: " + item.getPromptText());
                             ((CredentialItem.StringType) item).setValue(parse.getString("keypass"));
                         }
                         return true;
@@ -117,13 +118,9 @@ public class DemoAccessGitRepo {
                 };
                 UserInfo userInfo = new CredentialsProviderUserInfo(session, provider);
                 session.setUserInfo(userInfo);
-
-
-
-
-
             }
         };
+
 
         PushCommand push = git.push();
         push.setTransportConfigCallback(
