@@ -10,6 +10,7 @@ import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.transport.PushResult;
 import org.eclipse.jgit.transport.RemoteRefUpdate;
 
+import javax.json.JsonObject;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -18,9 +19,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Set;
 
-/**
- * Created by frode on 17.10.2016.
- */
 public class DemoAccessGitRepo {
 
     public static void main(String[] args) throws Exception {
@@ -81,10 +79,17 @@ public class DemoAccessGitRepo {
             }
         }
 
-        Iterable<PushResult> iterable = git.push().call();
+        String s = FileUtils.readFile(currentPath.resolve("../mygitconfig.json"));
+        System.out.println(s);
+        JsonObject parse = JavaxJsonUtil.parse(s);
+        System.out.println(parse.getString("hmm"));
+
+
+
+       /* Iterable<PushResult> iterable = git.push().call();
         PushResult pushResult = iterable.iterator().next();
         RemoteRefUpdate.Status status = pushResult.getRemoteUpdate( "refs/heads/master" ).getStatus();
-        System.out.println(status.toString());
+        System.out.println(status.toString());*/
 
 
         GitUtils.printStatus(git);
