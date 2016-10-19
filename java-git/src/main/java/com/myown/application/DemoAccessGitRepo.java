@@ -1,14 +1,18 @@
 package com.myown.application;
 
+import com.jcraft.jsch.Session;
+import com.jcraft.jsch.UserInfo;
 import org.apache.commons.lang.RandomStringUtils;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.PushCommand;
+import org.eclipse.jgit.api.TransportConfigCallback;
 import org.eclipse.jgit.dircache.DirCache;
+import org.eclipse.jgit.errors.UnsupportedCredentialItem;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
-import org.eclipse.jgit.transport.PushResult;
-import org.eclipse.jgit.transport.RemoteRefUpdate;
+import org.eclipse.jgit.transport.*;
 
 import javax.json.JsonObject;
 import java.io.File;
@@ -82,10 +86,60 @@ public class DemoAccessGitRepo {
         String s = FileUtils.readFile(currentPath.resolve("../mygitconfig.json"));
         System.out.println(s);
         JsonObject parse = JavaxJsonUtil.parse(s);
-        System.out.println(parse.getString("hmm"));
+        System.out.println(parse.getString("test"));
+        System.out.println(parse.getString("keypass"));
+
+
+        SshSessionFactory sshSessionFactory = new JschConfigSessionFactory() {
+            @Override
+            protected void configure(OpenSshConfig.Host host, Session session ) {
+                //session.setPassword( "password" );
+
+
+                CredentialsProvider provider = new CredentialsProvider() {
+                    @Override
+                    public boolean isInteractive() {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean supports(CredentialItem... items) {
+                        return true;
+                    }
+
+                    @Override
+                    public boolean get(URIish uri, CredentialItem... items) throws UnsupportedCredentialItem {
+                        for (CredentialItem item : items) {
+                            ((CredentialItem.StringType) item).setValue(parse.getString("keypass"));
+                        }
+                        return true;
+                    }
+                };
+                UserInfo userInfo = new CredentialsProviderUserInfo(session, provider);
+                session.setUserInfo(userInfo);
 
 
 
+
+
+            }
+        };
+
+        PushCommand push = git.push();
+        push.setTransportConfigCallback(
+                new TransportConfigCallback() {
+                    @Override
+                    public void configure( Transport transport ) {
+                        SshTransport sshTransport = ( SshTransport )transport;
+                        sshTransport.setSshSessionFactory( sshSessionFactory );
+                    }
+                }
+        );
+        Iterable<PushResult> iterable = push.call();
+
+        PushResult pushResult = iterable.iterator().next();
+        RemoteRefUpdate.Status status = pushResult.getRemoteUpdate( "refs/heads/master" ).getStatus();
+        System.out.println(status.toString());
        /* Iterable<PushResult> iterable = git.push().call();
         PushResult pushResult = iterable.iterator().next();
         RemoteRefUpdate.Status status = pushResult.getRemoteUpdate( "refs/heads/master" ).getStatus();
