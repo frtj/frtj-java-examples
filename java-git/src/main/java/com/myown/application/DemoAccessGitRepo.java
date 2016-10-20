@@ -110,6 +110,7 @@ public class DemoAccessGitRepo {
         SshSessionFactory sshSessionFactory = new JschConfigSessionFactory() {
             @Override
             protected void configure(OpenSshConfig.Host host, Session session ) {
+                System.out.println("config called");
 
             }
         };
