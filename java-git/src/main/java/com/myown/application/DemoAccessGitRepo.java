@@ -11,6 +11,7 @@ import org.eclipse.jgit.errors.UnsupportedCredentialItem;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
+import org.eclipse.jgit.storage.file.FileBasedConfig;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.transport.*;
 
@@ -43,6 +44,9 @@ public class DemoAccessGitRepo {
         Repository repository = repositoryBuilder.build();
 
         System.out.println("git dir: " + repository.getDirectory().toPath().toString());
+        FileBasedConfig c = (FileBasedConfig)repository.getConfig();
+        String url = c.getString("remote", "origin", "url");
+        System.out.println("remote origin "+url);
 
         if( repository.getObjectDatabase().exists() ) {
             System.out.println("unreliable: git repo exists");
