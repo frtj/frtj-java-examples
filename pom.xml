@@ -10,6 +10,12 @@
 
     <name>frtj-java-examples</name>
 
+    <modules>
+        <module>threads</module>
+        <module>servlet25</module>
+        <module>java-git</module>
+    </modules>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
