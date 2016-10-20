@@ -52,15 +52,6 @@ public class DemoAccessGitRepo {
         String url = c.getString("remote", "origin", "url");
         System.out.println("remote origin "+url);
 
-        /* this will fuck up the config in the repo
-        StoredConfig config = repository.getConfig();
-        RemoteConfig remoteConfig = new RemoteConfig(config, "origin");
-        URIish uri = new URIish("ssh:git@github.com:frtj/frtj-java-examples.git");
-        remoteConfig.addURI(uri);
-        remoteConfig.update(config);
-        config.save();*/
-
-
         if( repository.getObjectDatabase().exists() ) {
             System.out.println("unreliable: git repo exists");
         }
