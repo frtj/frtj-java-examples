@@ -116,7 +116,9 @@ public class DemoAccessGitRepo {
             protected JSch createDefaultJSch(final FS fs) throws JSchException {
                 JSch defaultJSch = super.createDefaultJSch(fs);
                 defaultJSch.removeAllIdentity();
-                defaultJSch.addIdentity(parse.getString("pubkey"));
+                String pubkey = parse.getString("pubkey");
+                System.out.println("pubkey: " + pubkey);
+                defaultJSch.addIdentity(pubkey);
                 return defaultJSch;
             }
 
