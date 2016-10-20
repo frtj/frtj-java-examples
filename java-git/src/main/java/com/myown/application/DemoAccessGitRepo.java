@@ -10,6 +10,7 @@ import org.eclipse.jgit.dircache.DirCache;
 import org.eclipse.jgit.errors.UnsupportedCredentialItem;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.lib.StoredConfig;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.storage.file.FileBasedConfig;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
@@ -47,6 +48,14 @@ public class DemoAccessGitRepo {
         FileBasedConfig c = (FileBasedConfig)repository.getConfig();
         String url = c.getString("remote", "origin", "url");
         System.out.println("remote origin "+url);
+
+        StoredConfig config = repository.getConfig();
+        RemoteConfig remoteConfig = new RemoteConfig(config, "origin");
+        URIish uri = new URIish("ssh://git@github.com:frtj/frtj-java-examples.git");
+        remoteConfig.addURI(uri);
+        remoteConfig.update(config);
+        config.save();
+
 
         if( repository.getObjectDatabase().exists() ) {
             System.out.println("unreliable: git repo exists");
