@@ -125,6 +125,8 @@ public class DemoAccessGitRepo {
             @Override
             protected void configure(OpenSshConfig.Host host, Session session ) {
                 System.out.println("config called");
+                session.setPassword(parse.getString("keypass"));
+                session.setConfig("StrictHostKeyChecking", "no");
             }
         };
 
