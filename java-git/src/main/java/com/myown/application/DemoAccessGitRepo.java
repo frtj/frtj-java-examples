@@ -118,15 +118,15 @@ public class DemoAccessGitRepo {
                 defaultJSch.removeAllIdentity();
                 String privkey = parse.getString("privkey");
                 System.out.println("privkey: " + privkey);
-                defaultJSch.addIdentity(privkey);
+                defaultJSch.addIdentity(privkey, parse.getString("keypass"));
                 return defaultJSch;
             }
 
             @Override
             protected void configure(OpenSshConfig.Host host, Session session ) {
                 System.out.println("config called");
-                session.setPassword(parse.getString("keypass"));
-                session.setConfig("StrictHostKeyChecking", "no");
+                //session.setPassword(parse.getString("keypass"));
+                //session.setConfig("StrictHostKeyChecking", "no");
             }
         };
 
