@@ -51,7 +51,7 @@ public class DemoAccessGitRepo {
 
         StoredConfig config = repository.getConfig();
         RemoteConfig remoteConfig = new RemoteConfig(config, "origin");
-        URIish uri = new URIish("ssh:/git@github.com:frtj/frtj-java-examples.git");
+        URIish uri = new URIish("ssh:git@github.com:frtj/frtj-java-examples.git");
         remoteConfig.addURI(uri);
         remoteConfig.update(config);
         config.save();
