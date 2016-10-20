@@ -117,7 +117,7 @@ public class DemoAccessGitRepo {
                 JSch defaultJSch = super.createDefaultJSch(fs);
                 defaultJSch.removeAllIdentity();
                 String privkey = parse.getString("privkey");
-                System.out.println("privkey: " + Paths.get(privkey).toAbsolutePath().toString());
+                System.out.println("privkey: " + Paths.get(privkey).normalize().toAbsolutePath().toString());
                 defaultJSch.addIdentity(Paths.get(privkey).toAbsolutePath().toString());
                 return defaultJSch;
             }
