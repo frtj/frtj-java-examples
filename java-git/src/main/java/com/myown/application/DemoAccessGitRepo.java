@@ -1,5 +1,7 @@
 package com.myown.application;
 
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.UserInfo;
 import org.apache.commons.lang.RandomStringUtils;
@@ -15,6 +17,7 @@ import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.storage.file.FileBasedConfig;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.transport.*;
+import org.eclipse.jgit.util.FS;
 
 import javax.json.JsonObject;
 import java.io.File;
@@ -108,10 +111,18 @@ public class DemoAccessGitRepo {
 
 
         SshSessionFactory sshSessionFactory = new JschConfigSessionFactory() {
+
+            @Override
+            protected JSch createDefaultJSch(final FS fs) throws JSchException {
+                JSch defaultJSch = super.createDefaultJSch(fs);
+                defaultJSch.removeAllIdentity();
+                defaultJSch.addIdentity(parse.getString("pubkey"));
+                return defaultJSch;
+            }
+
             @Override
             protected void configure(OpenSshConfig.Host host, Session session ) {
                 System.out.println("config called");
-
             }
         };
 
@@ -127,6 +138,8 @@ public class DemoAccessGitRepo {
                     }
                 }
         );
+
+
         Iterable<PushResult> iterable = push.call();
 
         PushResult pushResult = iterable.iterator().next();
